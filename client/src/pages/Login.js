@@ -1,6 +1,8 @@
 import react, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Routeconstant } from "../navigation/Routeconstant";
+import toast, { Toaster } from "react-hot-toast";
+import axios from "axios";
 import "./main.css";
 
 const Login = () => {
@@ -9,6 +11,29 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const onClickRegister = () => {
     navigate(Routeconstant.REGISTER);
+  };
+
+  const onClicklogin = () => {
+    loginuser();
+  };
+
+  const loginuser = async () => {
+    if (email !== "" && password !== "") {
+      const userObj = {
+        email,
+        password,
+      };
+      try {
+        const response = await axios.post("/api/v1/login", userObj);
+        if (response.data.success) {
+          toast.success(response.data.message);
+        } else {
+          toast.error(response.data.message);
+        }
+      } catch (error) {}
+    } else {
+      toast.error("Please enter email");
+    }
   };
 
   return (
@@ -33,7 +58,7 @@ const Login = () => {
         </div>
         <a className="Forgotpassword">Forgot Password</a>
         <div className="Buttonlogin">
-          <button>Login</button>
+          <button onClick={() => onClicklogin()}>Login</button>
           <button onClick={() => onClickRegister()}>Register</button>
         </div>
         <div className="Ordiv">

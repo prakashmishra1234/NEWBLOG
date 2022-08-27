@@ -1,6 +1,8 @@
 import react, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Routeconstant } from "../navigation/Routeconstant";
+import toast, { Toaster } from "react-hot-toast";
+import axios from "axios";
 import "./main.css";
 
 const Register = () => {
@@ -10,6 +12,27 @@ const Register = () => {
   const navigate = useNavigate();
   const onClickRegister = () => {
     navigate(Routeconstant.LOGIN);
+    registerUser();
+  };
+
+  const registerUser = async () => {
+    if (password === confirmpassword) {
+      const userObj = {
+        email,
+        password,
+        confirmpassword,
+      };
+      try {
+        const response = await axios.post("/api/v1/register", userObj);
+        if (response.data.success) {
+          toast.success(response.data.message);
+        } else {
+          toast.error(response.data.message);
+        }
+      } catch (error) {}
+    } else {
+      toast.error("Password and confirm password does not match");
+    }
   };
 
   return (
