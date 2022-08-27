@@ -1,0 +1,90 @@
+.Loginmain {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.Loginparent {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 70%;
+  width: 20%;
+  flex-direction: column;
+  background-color: #fff;
+  color: black;
+  border-radius: 2rem;
+  padding: 2rem;
+  font-size: 1rem;
+  overflow-y: auto;
+}
+
+.Loginparent div {
+  width: 100%;
+}
+
+.Loginparent p {
+  margin: 0 0 0.3rem 0;
+}
+
+.Loginparent input {
+  height: 2rem;
+  width: 100%;
+  border-radius: 0.5rem;
+  width: 99%;
+  padding: 0;
+  border: 1px solid grey;
+  background-color: #fff;
+}
+
+.Loginheading {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+}
+
+.Buttonlogin {
+  display: flex;
+  justify-content: space-around;
+  flex-direction: column;
+  height: 6rem;
+  align-items: center;
+}
+
+.Buttonlogin button {
+  width: 100%;
+  background-color: black;
+  color: white;
+  height: 2rem;
+  border-radius: 0.5rem;
+}
+
+.Ordiv {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.Joinusdiv {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.Joinuslogo {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+}
+
+.Joinuslogo img {
+  height: 2rem;
+  width: 2rem;
+}
+
+.Forgotpassword {
+  width: 100%;
+  text-align: right;
+  text-decoration: underline;
+}
