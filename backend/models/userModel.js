@@ -9,15 +9,17 @@ var validateEmail = function (email) {
 const userSchema = Schema({
   email: {
     type: String,
-    required: [true, "Please enter your email"],
-    unique: true,
-    validate: [validateEmail, "Please fill a valid email address"],
+    required: true,
+    // required: [true, "Please enter your email"],
+    // unique: true,
+    // validate: [validateEmail, "Please fill a valid email address"],
   },
   password: {
     type: String,
-    required: [true, "Please enter your password"],
-    minlength: [8, "Password should contain minimum 8 character"],
-    select: false,
+    required: true,
+    // required: [true, "Please enter your password"],
+    // minlength: [8, "Password should contain minimum 8 character"],
+    // select: false,
   },
   isVerified: {
     type: Boolean,

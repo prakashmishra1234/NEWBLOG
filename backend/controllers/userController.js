@@ -3,43 +3,48 @@ const catchAsyncError = require("../middleware/catchAsyncError");
 const ErrorHandler = require("../utils/errorhandler");
 
 //Register a user
-exports.registerUser = catchAsyncError(async (req, res, next) => {
-  const { email, password } = req.body;
-  const user = await User.create({
-    email,
-    password,
-  });
-  // sendToken(user, 201, res);
-  res.status(201).json({
-    success: true,
-    message: "User resgistered successfully",
-    newUser,
-  });
-});
+exports.registerUser = async (req, res, next) => {
+  const existingUser = await User.findOne({ email: req.body.email });
+  if (existingUser)
+    return res.status(200).send({
+      success: false,
+      message: "User already exists",
+      data: null,
+    });
+  const user = new User(req.body);
+  await user.save();
+  try {
+    res.status(201).send({
+      success: true,
+      message: "User resgistered successfully",
+      user,
+    });
+  } catch (error) {
+    res.status(400).send(error);
+  }
+};
 
 // Login User
-exports.loginUser = catchAsyncError(async (req, res, next) => {
-  const { email, password } = req.body;
-  // checking if user has given password and email both
-  if (!email || !password) {
-    return next(new ErrorHandler("Please Enter Email & Password", 400));
-  }
-  const user = await User.findOne({
-    email: email,
-    password: password,
-  });
-  if (!user) {
-    return next(new ErrorHandler("Invalid email or password", 401));
-  } else {
-    res.status(200).json({
-      success: true,
-      message: "user logged in successfully",
-      data: user,
+exports.loginUser = async (req, res, next) => {
+  try {
+    const user = await User.findOne({
+      email: req.body.email,
+      password: req.body.password,
     });
+    if (user) {
+      res.status(200).send({
+        success: true,
+        message: "User logged in successfully",
+        data: user,
+      });
+    } else {
+      res.status(200).send({
+        success: false,
+        message: "User login failed",
+        data: null,
+      });
+    }
+  } catch (error) {
+    res.status(400).send(error);
   }
-  // const isPasswordMatched = await user.comparePassword(password);
-  // if (!isPasswordMatched) {
-  //   return next(new ErrorHandler("Invalid email or password", 401));
-  // }
-  // sendToken(user, 200, res);
-});
+};

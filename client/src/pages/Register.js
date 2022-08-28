@@ -10,28 +10,32 @@ const Register = () => {
   const [password, setPassword] = useState("");
   const [confirmpassword, setConfirmpassword] = useState("");
   const navigate = useNavigate();
-  const onClickRegister = () => {
-    navigate(Routeconstant.LOGIN);
-    registerUser();
-  };
+  const onClickRegister = async () => {
+    const userObj = {
+      email,
+      password,
+      confirmpassword,
+    };
 
-  const registerUser = async () => {
-    if (password === confirmpassword) {
-      const userObj = {
-        email,
-        password,
-        confirmpassword,
-      };
-      try {
-        const response = await axios.post("/api/v1/register", userObj);
-        if (response.data.success) {
-          toast.success(response.data.message);
+    try {
+      toast.loading("Loading...");
+      if (password !== confirmpassword) {
+        toast.dismiss();
+        toast.error("Password and confirm password does not match");
+      } else {
+        const res = await axios.post("/api/v1/register", userObj);
+        if (res.data.success) {
+          toast.dismiss();
+          toast.success(res.data.message);
+          navigate(Routeconstant.LOGIN);
         } else {
-          toast.error(response.data.message);
+          toast.dismiss();
+          toast.error(res.data.message);
         }
-      } catch (error) {}
-    } else {
-      toast.error("Password and confirm password does not match");
+      }
+    } catch (error) {
+      toast.dismiss();
+      console.log(error);
     }
   };
 

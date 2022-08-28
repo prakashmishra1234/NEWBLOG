@@ -13,32 +13,26 @@ const Login = () => {
     navigate(Routeconstant.REGISTER);
   };
 
-  const onClicklogin = () => {
-    loginuser();
-  };
+  const onClicklogin = async () => {
+    const userObj = {
+      email,
+      password,
+    };
 
-  const loginuser = async () => {
-    if (email !== "" && password !== "") {
-      const userObj = {
-        email,
-        password,
-      };
-      await axios.post("/api/v1/login", userObj).then((res) => {
-        console.log(res.data);
-      });
-      try {
-        const response = await axios.post("/api/v1/login", userObj);
-        // console.log(response.data.message);
-        if (response.data.success) {
-          toast.success(response.data.message);
-        } else {
-          toast.error(response.data.message);
-        }
-      } catch (error) {
-        console.log(error);
+    try {
+      toast.loading("Loading...");
+      const res = await axios.post("/api/v1/login", userObj);
+      if (res.data.success) {
+        toast.dismiss();
+        toast.success(res.data.message);
+        navigate(Routeconstant.HOME);
+      } else {
+        toast.dismiss();
+        toast.error(res.data.message);
       }
-    } else {
-      toast.error("Please enter email");
+    } catch (error) {
+      toast.dismiss();
+      console.log(error);
     }
   };
 
