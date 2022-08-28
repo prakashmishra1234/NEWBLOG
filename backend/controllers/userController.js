@@ -2,10 +2,14 @@ const User = require("../models/userModel");
 const catchAsyncError = require("../middleware/catchAsyncError");
 const ErrorHandler = require("../utils/errorhandler");
 
-//create user
-exports.register = catchAsyncError(async (req, res, next) => {
-  const newUser = await new User(req.body);
-  await newUser.save();
+//Register a user
+exports.registerUser = catchAsyncError(async (req, res, next) => {
+  const { email, password } = req.body;
+  const user = await User.create({
+    email,
+    password,
+  });
+  // sendToken(user, 201, res);
   res.status(201).json({
     success: true,
     message: "User resgistered successfully",
@@ -13,14 +17,19 @@ exports.register = catchAsyncError(async (req, res, next) => {
   });
 });
 
-//login user
+// Login User
 exports.loginUser = catchAsyncError(async (req, res, next) => {
+  const { email, password } = req.body;
+  // checking if user has given password and email both
+  if (!email || !password) {
+    return next(new ErrorHandler("Please Enter Email & Password", 400));
+  }
   const user = await User.findOne({
-    email: req.body.email,
-    password: req.body.password,
+    email: email,
+    password: password,
   });
   if (!user) {
-    return next(new ErrorHandler("User not found", 404));
+    return next(new ErrorHandler("Invalid email or password", 401));
   } else {
     res.status(200).json({
       success: true,
@@ -28,4 +37,9 @@ exports.loginUser = catchAsyncError(async (req, res, next) => {
       data: user,
     });
   }
+  // const isPasswordMatched = await user.comparePassword(password);
+  // if (!isPasswordMatched) {
+  //   return next(new ErrorHandler("Invalid email or password", 401));
+  // }
+  // sendToken(user, 200, res);
 });
