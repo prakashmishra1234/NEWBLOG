@@ -1,6 +1,7 @@
 const express = require("express");
 const app = express();
 const cors = require("cors");
+const errorMiddleware = require("./middleware/error");
 
 //Handle cors
 app.use(cors());
@@ -13,5 +14,8 @@ const newUser = require("./routes/userRoute");
 
 app.use("/api/v1", posts);
 app.use("/api/v1", newUser);
+
+//Middleware for error
+app.use(errorMiddleware);
 
 module.exports = app;

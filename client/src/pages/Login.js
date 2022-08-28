@@ -23,14 +23,20 @@ const Login = () => {
         email,
         password,
       };
+      await axios.post("/api/v1/login", userObj).then((res) => {
+        console.log(res.data);
+      });
       try {
         const response = await axios.post("/api/v1/login", userObj);
+        // console.log(response.data.message);
         if (response.data.success) {
           toast.success(response.data.message);
         } else {
           toast.error(response.data.message);
         }
-      } catch (error) {}
+      } catch (error) {
+        console.log(error);
+      }
     } else {
       toast.error("Please enter email");
     }

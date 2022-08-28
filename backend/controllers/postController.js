@@ -1,32 +1,29 @@
 const Post = require("../models/postModels");
+const ErrorHandler = require("../utils/errorhandler");
+const catchAsyncError = require("../middleware/catchAsyncError");
 
 //Create Post
-exports.createPosts = async (req, res, next) => {
+exports.createPosts = catchAsyncError(async (req, res, next) => {
   const post = await Post.create(req.body);
   res.status(201).json({
     success: true,
     post,
   });
-};
+});
 
 //Get All Posts
-exports.getAllPosts = async (req, res, next) => {
+exports.getAllPosts = catchAsyncError(async (req, res, next) => {
   const posts = await Post.find();
   res.status(201).json({
     success: true,
     posts,
   });
-};
+});
 
 //Update post
-exports.updatepost = async (req, res, next) => {
+exports.updatepost = catchAsyncError(async (req, res, next) => {
   let post = await Post.findById(req.params.id);
-  if (!post) {
-    res.status(500).json({
-      success: false,
-      message: "post not found",
-    });
-  }
+  if (!post) return next(new ErrorHandler("Post not found", 404));
   post = await Post.findByIdAndUpdate(req.params.id, req.body, {
     new: true,
     runValidators: true,
@@ -37,20 +34,15 @@ exports.updatepost = async (req, res, next) => {
     message: "post updated",
     post,
   });
-};
+});
 
 //Delete Post
-exports.deletePost = async (req, res, next) => {
+exports.deletePost = catchAsyncError(async (req, res, next) => {
   let post = await Post.findById(req.params.id);
-  if (!post) {
-    res.status(500).json({
-      success: false,
-      message: "Post not found",
-    });
-  }
+  if (!post) return next(new ErrorHandler("Post not found", 404));
   await post.remove();
   res.status(200).json({
     success: true,
     message: "Post Deleted Successfully",
   });
-};
+});
