@@ -46,3 +46,14 @@ exports.deletePost = catchAsyncError(async (req, res, next) => {
     message: "Post Deleted Successfully",
   });
 });
+
+//Get post details
+exports.postDetails = catchAsyncError(async (req, res, next) => {
+  let post = await Post.findById(req.params.id);
+  if (!post) return next(new ErrorHandler("Post not found", 404));
+  await post.remove();
+  res.status(200).json({
+    success: true,
+    post,
+  });
+});
