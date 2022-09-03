@@ -9,27 +9,17 @@ var validateEmail = function (email) {
 const userSchema = Schema({
   email: {
     type: String,
-    required: true,
-    // required: [true, "Please enter your email"],
-    // unique: true,
-    // validate: [validateEmail, "Please fill a valid email address"],
+    required: [true, "Please enter your email"],
+    validate: [validateEmail, "Please fill a valid email address"],
   },
   password: {
     type: String,
-    required: true,
-    // required: [true, "Please enter your password"],
-    // minlength: [8, "Password should contain minimum 8 character"],
-    // select: false,
+    required: [true, "Please enter your password"],
+    minlength: [8, "Password should contain minimum 8 character"],
   },
   isVerified: {
     type: Boolean,
     default: false,
   },
 });
-
-// // Compare Password
-// userSchema.methods.comparePassword = async function (password) {
-//   return await bcrypt.compare(password, this.password);
-// };
-
 module.exports = mongoose.model("User", userSchema);
