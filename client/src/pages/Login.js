@@ -21,7 +21,7 @@ const Login = () => {
 
     try {
       toast.loading("Loading...");
-      const res = await axios.post("/api/v1/login", userObj);
+      const res = await axios.post("/api/v1/login", { email, password });
       if (res.data.success) {
         toast.dismiss();
         toast.success(res.data.message);

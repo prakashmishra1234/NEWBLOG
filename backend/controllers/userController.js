@@ -4,9 +4,10 @@ const ErrorHandler = require("../utils/errorhandler");
 
 //Register a user
 exports.registerUser = catchAsyncError(async (req, res, next) => {
-  const existingUser = await User.findOne({ email: req.body.email });
+  const { email, password } = req.body;
+  const existingUser = await User.findOne({ email });
   if (existingUser) return next(new ErrorHandler("User already exist", 200));
-  const user = new User(req.body);
+  const user = new User({ email, password });
   await user.save();
   res.status(201).send({
     success: true,
@@ -17,17 +18,25 @@ exports.registerUser = catchAsyncError(async (req, res, next) => {
 
 // Login User
 exports.loginUser = catchAsyncError(async (req, res, next) => {
-  const user = await User.findOne({
-    email: req.body.email,
-    password: req.body.password,
-  });
-  if (user) {
+  const { email, password } = req.body;
+  if (!email || !password)
+    return next(new ErrorHandler("Please enter email and password", 404));
+  const user = await User.findOne({ email, password });
+  //const isPasswordMatched = await user.comparePassword(password);
+  // if (!isPasswordMatched) {
+  //   return next(new ErrorHandler("Invalid email or password", 401));
+  // }
+  // if (!user) return next(new ErrorHandler("Invalid email or password", 404));
+  if (!user) {
     res.status(200).send({
-      success: true,
-      message: "User logged in successfully",
-      data: user,
+      success: false,
+      message: "Invalid username or password",
+      data: null,
     });
-  } else {
-    return next(new ErrorHandler("User not found", 404));
   }
+  res.status(200).send({
+    success: true,
+    message: "User logged in successfully",
+    data: user,
+  });
 });
