@@ -5,6 +5,7 @@ import Register from "../pages/Register";
 import Home from "../pages/Home";
 import { Routeconstant } from "./Routeconstant";
 import Layout from "../layout/Layout";
+import About from "../pages/About";
 
 const Index = () => {
   return (
@@ -18,6 +19,7 @@ const Index = () => {
           <Route path={Routeconstant.LOGIN} element={<Login />}></Route>
           <Route path={Routeconstant.REGISTER} element={<Register />}></Route>
           <Route path={Routeconstant.HOME} element={<Home />}></Route>
+          <Route path={Routeconstant.ABOUT} element={<About />}></Route>
         </Route>
       </Routes>
     </BrowserRouter>

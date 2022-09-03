@@ -3,21 +3,19 @@
   justify-content: center;
   align-items: center;
   height: 100%;
+  overflow-y: auto;
 }
 
 .Loginparent {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 70%;
-  width: 20%;
   flex-direction: column;
   background-color: #fff;
   color: black;
   border-radius: 2rem;
   padding: 2rem;
   font-size: 1rem;
-  overflow-y: auto;
 }
 
 .Loginparent div {
