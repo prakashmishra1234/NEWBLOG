@@ -12,15 +12,20 @@ const postSchema = Schema({
       },
     },
   ],
+  category: {
+    type: String,
+    trim: true,
+    required: [true, "Please enter category"],
+  },
   title: {
     type: String,
     trim: true,
-    required: true,
+    required: [true, "Please enter title"],
   },
   text: {
     type: String,
     trim: true,
-    required: true,
+    required: [true, "Please enter your content"],
   },
   date: {
     type: Date,

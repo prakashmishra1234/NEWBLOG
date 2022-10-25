@@ -1,6 +1,7 @@
 const Post = require("../models/postModels");
 const ErrorHandler = require("../utils/errorhandler");
 const catchAsyncError = require("../middleware/catchAsyncError");
+const ApiFeatures = require("../utils/apifeatures");
 
 //Create Post
 exports.createPosts = catchAsyncError(async (req, res, next) => {
@@ -13,9 +14,15 @@ exports.createPosts = catchAsyncError(async (req, res, next) => {
 
 //Get All Posts
 exports.getAllPosts = catchAsyncError(async (req, res, next) => {
-  const posts = await Post.find();
+  const resultPerPage = 5;
+  const postCount = await Post.countDocuments();
+  const ApiFeature = new ApiFeatures(Post.find(), req.query)
+    .search()
+    .pagination(resultPerPage);
+  const posts = await ApiFeature.query;
   res.status(201).json({
     success: true,
+    postCount,
     posts,
   });
 });
