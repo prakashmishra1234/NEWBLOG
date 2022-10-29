@@ -2,6 +2,7 @@ const User = require("../models/userModel");
 const catchAsyncError = require("../middleware/catchAsyncError");
 const ErrorHandler = require("../utils/errorhandler");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 
 //Register a user
 exports.registerUser = catchAsyncError(async (req, res, next) => {
@@ -35,16 +36,30 @@ exports.loginUser = catchAsyncError(async (req, res, next) => {
   }
   const isPasswordMatched = await bcrypt.compare(password, user.password);
   if (isPasswordMatched) {
+    const dataToBeSent = {
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+    };
+    const token = jwt.sign(dataToBeSent, process.env.SECRET_KEY, {
+      expiresIn: 60 * 60,
+    });
     res.status(200).send({
       success: true,
       message: "User logged in successfully",
-      data: user,
+      data: token,
     });
   } else {
-    res.status(200).json({
+    res.status(404).json({
       success: "false",
       message: "Username or password is incorrect!",
       data: null,
     });
   }
+});
+
+exports.getUser = catchAsyncError(async (req, res, next) => {
+  res
+    .status(200)
+    .json({ success: true, message: "User found", data: req.body.user });
 });

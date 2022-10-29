@@ -14,27 +14,38 @@ import Typography from "@mui/material/Typography";
 import Button from "@mui/material/Button";
 import { useNavigate } from "react-router-dom";
 import { Routeconstant } from "../navigation/Routeconstant";
+import { LOCALSTORAGE_KEY } from "../config";
 
 const drawerWidth = 240;
-const navItems = ["Home", "About", "Login", "Logout"];
+const navItems = ["Home", "About"];
 
 function Header(props) {
   const Navigate = useNavigate();
   const { window } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [login, setLogin] = React.useState(false);
 
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
   };
 
+  React.useEffect(() => {
+    const user = JSON.parse(localStorage.getItem(LOCALSTORAGE_KEY));
+    console.log(user);
+    if (user && user.data.length) {
+      setLogin(true);
+    }
+  }, []);
+
   const onClickMenuItem = (item) => {
-    if (item == "About") {
+    if (item === "About") {
       Navigate(Routeconstant.ABOUT);
-    } else if (item == "Home") {
+    } else if (item === "Home") {
       Navigate(Routeconstant.HOME);
-    } else if (item == "Login") {
+    } else if (item === "Login") {
       Navigate(Routeconstant.LOGIN);
-    } else if (item == "Logout") {
+    } else if (item === "Logout") {
+      localStorage.removeItem("BLOG");
       Navigate(Routeconstant.LOGIN);
     }
   };
@@ -57,6 +68,19 @@ function Header(props) {
             </ListItemButton>
           </ListItem>
         ))}
+        {login ? (
+          <ListItem disablePadding onClick={() => onClickMenuItem("Logout")}>
+            <ListItemButton sx={{ textAlign: "center" }}>
+              <ListItemText primary={"Logout"} />
+            </ListItemButton>
+          </ListItem>
+        ) : (
+          <ListItem disablePadding onClick={() => onClickMenuItem("Login")}>
+            <ListItemButton sx={{ textAlign: "center" }}>
+              <ListItemText primary={"Login"} />
+            </ListItemButton>
+          </ListItem>
+        )}
       </List>
     </Box>
   );
@@ -94,6 +118,21 @@ function Header(props) {
                 {item}
               </Button>
             ))}
+            {login ? (
+              <Button
+                sx={{ color: "#000" }}
+                onClick={() => onClickMenuItem("Logout")}
+              >
+                {"Logout"}
+              </Button>
+            ) : (
+              <Button
+                sx={{ color: "#000" }}
+                onClick={() => onClickMenuItem("Login")}
+              >
+                {"Login"}
+              </Button>
+            )}
           </Box>
         </Toolbar>
       </AppBar>
