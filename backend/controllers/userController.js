@@ -3,6 +3,7 @@ const catchAsyncError = require("../middleware/catchAsyncError");
 const ErrorHandler = require("../utils/errorhandler");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const sendEmail = require("../utils/sendEmail");
 
 //Register a user
 exports.registerUser = catchAsyncError(async (req, res, next) => {
@@ -14,6 +15,12 @@ exports.registerUser = catchAsyncError(async (req, res, next) => {
   password = hashdePAssword;
   const user = await new User({ name, email, password });
   await user.save();
+  const mailOptions = {
+    email: email,
+    subject: "Email Verification",
+    message: "Please verify your email",
+  };
+  sendEmail(mailOptions);
   res.status(201).send({
     success: true,
     message: "User resgistered successfully",
