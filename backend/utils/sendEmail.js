@@ -1,7 +1,6 @@
 const nodemailer = require("nodemailer");
 
 const sendEmail = async (options) => {
-  console.log(options);
   const transporter = nodemailer.createTransport({
     host: process.env.SMPT_HOST,
     port: process.env.SMPT_PORT,
@@ -16,6 +15,7 @@ const sendEmail = async (options) => {
     to: options.email,
     subject: options.subject,
     text: options.message,
+    html: "<div><a href= `https://www.youtube.com`></a></div>",
   };
   await transporter.sendMail(mailOptions);
 };

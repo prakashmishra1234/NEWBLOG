@@ -66,7 +66,17 @@ exports.loginUser = catchAsyncError(async (req, res, next) => {
 });
 
 exports.getUser = catchAsyncError(async (req, res, next) => {
-  res
-    .status(200)
-    .json({ success: true, message: "User found", data: req.body.user });
+  const { email } = req.body.user;
+  const UserData = await User.findOne({ email });
+  if (UserData) {
+    res
+      .status(200)
+      .json({ success: true, message: "User found", data: UserData });
+  } else {
+    res.status(404).json({
+      success: false,
+      message: "user not found",
+      data: null,
+    });
+  }
 });
