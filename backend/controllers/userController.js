@@ -4,6 +4,7 @@ const ErrorHandler = require("../utils/errorhandler");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const sendEmail = require("../utils/sendEmail");
+const Token = require("../models/tokenSchema");
 
 //Register a user
 exports.registerUser = catchAsyncError(async (req, res, next) => {
@@ -14,17 +15,21 @@ exports.registerUser = catchAsyncError(async (req, res, next) => {
   const hashdePAssword = await bcrypt.hash(password, salt);
   password = hashdePAssword;
   const user = await new User({ name, email, password });
-  await user.save();
+  const newUser = await user.save();
+  const hashedtext = bcrypt.hashSync(newUser._id.toString(), 10);
+  const ClickableToken = new Token({ userid: newUser._id, token: hashedtext });
+  await ClickableToken.save();
+  const emailtext = `<div><h3>Click on the below link to verify your email</h3> <a href="http://localhost:3000/verifyemail/${hashedtext}">Click here for verification</a></div>`;
   const mailOptions = {
     email: email,
     subject: "Email Verification",
-    message: "Please verify your email",
+    emailcontent: emailtext,
   };
-  sendEmail(mailOptions);
+  await sendEmail(mailOptions);
   res.status(201).send({
     success: true,
-    message: "User resgistered successfully",
-    user,
+    message: "User verification mail sent",
+    data: newUser,
   });
 });
 
@@ -65,6 +70,23 @@ exports.loginUser = catchAsyncError(async (req, res, next) => {
   }
 });
 
+exports.verifyemail = catchAsyncError(async (req, res, next) => {
+  const token = await Token.findOne({ token: req.body.token });
+  if (token) {
+    const data = await User.findOneAndUpdate({
+      _id: token.userid,
+      isVerified: true,
+    });
+    res.status(201).json({
+      success: true,
+      message: "Email validation successfull",
+      data: data,
+    });
+  } else {
+    return next(new ErrorHandler("Invalid token", 404));
+  }
+});
+
 exports.getUser = catchAsyncError(async (req, res, next) => {
   const { email } = req.body.user;
   const UserData = await User.findOne({ email });
@@ -73,10 +95,11 @@ exports.getUser = catchAsyncError(async (req, res, next) => {
       .status(200)
       .json({ success: true, message: "User found", data: UserData });
   } else {
-    res.status(404).json({
-      success: false,
-      message: "user not found",
-      data: null,
-    });
+    return next(new ErrorHandler("User not found", 404));
+    // res.status(404).json({
+    //   success: false,
+    //   message: "user not found",
+    //   data: null,
+    // });
   }
 });

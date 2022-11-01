@@ -1,4 +1,5 @@
 const nodemailer = require("nodemailer");
+const bcrypt = require("bcrypt");
 
 const sendEmail = async (options) => {
   const transporter = nodemailer.createTransport({
@@ -14,8 +15,7 @@ const sendEmail = async (options) => {
     from: process.env.SMPT_MAIL,
     to: options.email,
     subject: options.subject,
-    text: options.message,
-    html: "<div><a href= `https://www.youtube.com`></a></div>",
+    html: options.emailcontent,
   };
   await transporter.sendMail(mailOptions);
 };
